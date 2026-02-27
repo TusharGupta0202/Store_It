@@ -4,7 +4,7 @@ const layout = ({ children } : { children: React.ReactNode }) => {
   return (
     <div className="flex min-h-screen">
         <section className="items-center justify-center hidden w-1/2 p-10 bg-brand lg:flex xl:w-2/5">
-            <div className="flex max-h-[800px] max-w-[430px] flex-col justify-center space-y-12">
+            <div className="flex max-h-200 max-w-107.5 flex-col justify-center space-y-12">
                 <Image src='/assets/icons/logo-full.svg' alt="logo" width={224} height={82} className="h-auto" />
                 <div className="space-y-5 text-white">
                     <h1 className="h1">Manage your files the best way</h1>
@@ -15,7 +15,7 @@ const layout = ({ children } : { children: React.ReactNode }) => {
         </section>
         <section className="flex flex-col items-center flex-1 p-4 py-10 bg-white lg:justify-center lg:p-10 lg:py-0">
             <div className="mb-16 lg:hidden">
-                <Image src='/assets/icons/logo-full-brand.svg' alt="logo" width={224} height={82} className="h-auto w-[200px] lg:w-[250px]" />
+                <Image src='/assets/icons/logo-full-brand.svg' alt="logo" width={224} height={82} className="h-auto w-50 lg:w-62.5" />
             </div>
             {children}
         </section>
