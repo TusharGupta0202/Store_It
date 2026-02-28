@@ -29,7 +29,7 @@ export async function trackFileUploaded({
     distinctId: ownerId,
     event: "file_uploaded",
     properties: {
-      account_id: accountId,
+      accountId: accountId,
       file_name: fileName,
       file_type: fileType,
       file_size_bytes: fileSize,

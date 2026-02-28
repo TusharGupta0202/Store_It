@@ -37,6 +37,8 @@ const OtpModal = ({
     e.preventDefault();
     setIsLoading(true);
 
+    console.log({ accountId, password });
+
     try {
       const sessionId = await verifySecret({ accountId, password });
 

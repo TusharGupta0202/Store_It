@@ -2,12 +2,13 @@
 
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
-import { Query, ID } from "node-appwrite";
+import { Query, ID } from "appwrite";
 import { parseStringify } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { avatarPlaceholderUrl } from "@/constants";
 import { redirect } from "next/navigation";
 import { getPostHogClient } from "../posthog-server";
+
 
 // PostHog server-side tracking for user authentication.
 // These functions are called from existing (or future) Appwrite auth wrappers.
@@ -69,10 +70,12 @@ const getUserByEmail = async (email: string) => {
   const { tablesDB } = await createAdminClient();
 
   const result = await tablesDB.listRows({
-    databaseId: appwriteConfig.databaseId,
-    tableId: appwriteConfig.usersTableId,
+
+    databaseId:appwriteConfig.databaseId,
+    tableId:appwriteConfig.usersTableId,
     queries: [Query.equal("email", email)],
-  });
+  }
+  );
 
   return result.total > 0 ? result.rows[0] : null;
 };
@@ -122,7 +125,8 @@ export const createAccount = async ({
         avatar: avatarPlaceholderUrl,
         accountId,
       },
-    });
+    }
+    );
   }
 
   return parseStringify({ accountId });
@@ -138,7 +142,10 @@ export const verifySecret = async ({
   try {
     const { account } = await createAdminClient();
 
-    const session = await account.createSession(accountId, password);
+    const session = await account.createSession({
+      userId: accountId,
+      secret: password,
+    });
 
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
@@ -177,7 +184,9 @@ export const signOutUser = async () => {
   const { account } = await createSessionClient();
 
   try {
-    await account.deleteSession("current");
+    await account.deleteSession({
+      sessionId: "current",
+    });
     (await cookies()).delete("appwrite-session");
   } catch (error) {
     handleError(error, "Failed to sign out user");
