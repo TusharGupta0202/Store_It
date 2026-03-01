@@ -522,7 +522,7 @@
   
 
   .error-toast {
-    @apply bg-red !rounded-[10px]   ;
+    @apply bg-brand !rounded-[10px]   ;
   }
 
   /* Header */
