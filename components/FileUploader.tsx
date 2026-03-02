@@ -97,7 +97,7 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
                     url={convertFileToUrl(file)}
                   />
 
-                  <div className="preview-item-name">
+                  <div className="preview-item-name subtitle-2">
                     {file.name}
                     <Image
                       src="/assets/icons/file-loader.gif"

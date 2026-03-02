@@ -96,7 +96,7 @@ const AuthForm = ({type}: {type: FormType}) => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="form-submit-button" disabled={isLoading}>
+          <Button type="submit" className="form-submit-button primary-btn" disabled={isLoading}>
             {type === "sign-in" ? "Login" : "Sign Up"}
             {isLoading && (
               <Image src="/assets/icons/loader.svg" alt="Loader" width={24} height={24} className="ml-2 animate-spin" />

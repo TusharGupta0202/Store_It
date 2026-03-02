@@ -66,13 +66,13 @@ const MobileNavigation = ({
             <Separator className="mb-4 bg-light-200/20" />
           </SheetTitle>
 
-          <nav className="mobile-nav">
+          <nav className="mobile-nav h5">
             <ul className="mobile-nav-list">
               {navItems.map(({ url, name, icon }) => (
                 <Link key={name} href={url} className="lg:w-full">
                   <li
                     className={cn(
-                      "mobile-nav-item",
+                      "mobile-nav-item h5",
                       pathname === url && "shad-active",
                     )}
                   >
@@ -99,7 +99,7 @@ const MobileNavigation = ({
             <FileUploader ownerId={ownerId} accountId={accountId} />
             <Button
               type="submit"
-              className="mobile-sign-out-button"
+              className="mobile-sign-out-button h5"
               onClick={async () => await signOutUser()}
             >
               <Image

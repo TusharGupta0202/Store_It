@@ -5,10 +5,13 @@ import { getPostHogClient } from "@/lib/posthog-server";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { InputFile } from "node-appwrite/file";
 import { appwriteConfig } from "@/lib/appwrite/config";
-import { ID, Models, Query } from "node-appwrite";
+import { ID, Models, Query } from "appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/actions/user.actions";
+import { FileRow, FileDoc } from "@/types/file.types";
+import { UserRow } from "@/types/user.types";
+
 
 // PostHog server-side tracking for file operations.
 // These functions are called from existing (or future) Appwrite action wrappers.
@@ -221,7 +224,7 @@ export const uploadFile = async ({
 };
 
 const createQueries = (
-  currentUser: Models.Document,
+  currentUser: Models.User,
   types: string[],
   searchText: string,
   sort: string,
@@ -229,8 +232,8 @@ const createQueries = (
 ) => {
   const queries = [
     Query.or([
-      Query.equal("owner", [currentUser.$id]),
-      // Query.contains("users", [currentUser.email]),
+      Query.equal("owner", currentUser.$id),
+      Query.contains("users", currentUser.email),
     ]),
   ];
 
@@ -264,14 +267,41 @@ export const getFiles = async ({
 
     const queries = createQueries(currentUser, types, searchText, sort, limit);
 
-    const files = await tablesDB.listRows({
+    const fileResponse  = await tablesDB.listRows<FileRow>({
       databaseId: appwriteConfig.databaseId,
       tableId: appwriteConfig.filesTableId,
       queries,
     });
 
-    console.log({ files });
-    return parseStringify(files);
+    const files = fileResponse.rows;
+
+    if (files.length === 0) {
+      return { total: 0, rows: [] };
+    }
+
+    const ownerIds = [...new Set(files.map(file => file.owner))];
+
+    // Fetch user rows
+    const userResponse = await tablesDB.listRows<UserRow>({
+      databaseId: appwriteConfig.databaseId,
+      tableId: appwriteConfig.usersTableId,
+      queries: [Query.equal("$id", ownerIds)],
+    });
+
+    const userMap = new Map(
+      userResponse.rows.map(user => [user.$id, user])
+    );
+
+    // Merge owner into file
+    const filesWithOwner: FileDoc[] = files.map(file => ({
+      ...file,
+      owner: userMap.get(file.owner)!,
+    }));
+
+    return parseStringify({
+      total: fileResponse.total,
+      rows: filesWithOwner,
+    });
   } catch (error) {
     handleError(error, "Failed to get files");
   }

@@ -15,16 +15,16 @@ interface SidebarProps {
 const Sidebar = ({fullName , avatar , email } : SidebarProps) => {
     const pathname = usePathname();
   return (
-    <aside className="sidebar">
+    <aside className="sidebar remove-scrollbar">
         <Link href='/' className='flex-center' >
             <Image src='/assets/icons/logo-full-brand.svg' alt='logo' width={160} height={50} className='hidden h-auto lg:block '/>
             <Image src='/assets/icons/logo-brand.svg' alt='logo' width={52} height={52} className='lg:hidden '/>
         </Link>
-        <nav className='sidebar-nav'>
+        <nav className='sidebar-nav h5'>
             <ul className='flex flex-col flex-1 gap-6'>
                 {navItems.map(({url,name,icon}) => (
                     <Link href={url} key={name} className='lg:w-full'>
-                        <li className={cn('sidebar-nav-item', pathname === url && 'shad-active') }>
+                        <li className={cn('sidebar-nav-item h5', pathname === url && 'shad-active') }>
                             <Image src={icon} alt={name} width={24} height={24} className={cn('nav-icon', pathname === url && 'nav-icon-active')}/>
                             <p className='hidden lg:block'>{name}</p>
                         </li>
