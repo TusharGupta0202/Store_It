@@ -13,7 +13,6 @@ import { uploadFile } from "../lib/actions/file.actions";
 import { usePathname } from "next/navigation";
 
 
-
 const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
   const path = usePathname();
   const { toast } = useToast();
@@ -26,7 +25,7 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
       const uploadPromises = acceptedFiles.map(async (file) => {
         if (file.size > MAX_FILE_SIZE) {
           setFiles((prevFiles) =>
-            prevFiles.filter((f) => f.name !== file.name),
+            prevFiles.filter((f) => f.name !== file.name)
           );
 
           return toast({
@@ -40,15 +39,23 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
           });
         }
 
-        return uploadFile({ file, ownerId, accountId, path }).then(
-          (uploadedFile) => {
-            if (uploadedFile) {
-              setFiles((prevFiles) =>
-                prevFiles.filter((f) => f.name !== file.name),
-              );
-            }
-          },
-        );
+         try {
+          const result = await uploadFile({ file, ownerId, accountId, path });
+
+          if (result) {
+            setFiles((prevFiles) =>
+              prevFiles.filter((f) => f.name !== file.name)
+            );
+          }
+          return result;
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Unknown error";
+          toast({
+            description: `Failed to upload ${file.name}: ${errorMessage}`,
+            className: "error-toast",
+          });
+        }
       });
 
       await Promise.all(uploadPromises);
@@ -60,7 +67,7 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
 
   const handleRemoveFile = (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>,
-    fileName: string,
+    fileName: string
   ) => {
     e.stopPropagation();
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
